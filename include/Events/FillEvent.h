@@ -30,8 +30,8 @@ constexpr std::string_view fill_direction_to_string(FillDirection& direction) {
 class FillEvent : public Event {
 public:
     FillEvent(
-        std::string timeindex, 
-        std::string symbol, 
+        const std::string& timeindex, 
+        const std::string& symbol, 
         int quantity, 
         FillDirection direction, 
         double fill_cost, 
@@ -59,9 +59,8 @@ public:
 private:
     const EventType type_ = EventType::Fill;
 
-    std::string timeindex_;
+    const std::string timeindex_;
     const std::string symbol_;
-    std::string exchange_;
     int quantity_;
     double fill_cost_;
     double commission_;

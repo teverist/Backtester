@@ -40,9 +40,9 @@ public:
 private:
     const EventType type_ = EventType::Order;
 
-    std::string symbol_;
+    const std::string symbol_;
     OrderType order_type_;
-    int quantity_;
+    const int quantity_;
     FillDirection direction_;
 };
 

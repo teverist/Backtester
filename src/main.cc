@@ -1,6 +1,4 @@
-
 #include <iostream>
-
 
 #include <Events/Event.h>
 #include <Events/FillEvent.h>
@@ -27,7 +25,7 @@ int main() {
     const std::string interval = "1d";
     float heartbeat = 0.0;
 
-
+    
     auto backtest = Backtest<HistoricCSVDataHandler, Portfolio<HistoricCSVDataHandler>, BuyAndHoldStrategy, SimpleSimulatedExecutionHandler>(
         data_dir,
         symbol_list,

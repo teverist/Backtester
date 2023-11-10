@@ -20,20 +20,18 @@ class SignalEvent : public Event
 {
 public:
 
-    SignalEvent(std::string symbol, std::string datetime, SignalType signal_type, double strength = 1.0) :
+    SignalEvent(const std::string& symbol, const std::string& datetime, const SignalType signal_type, const double strength = 1.0) :
         symbol(symbol), datetime(datetime), signal_type(signal_type), strength(strength) {};
 
     EventType getType() const override { return type; }
 
-    std::string symbol;
-    std::string datetime;
-    SignalType signal_type;
-    double strength;
+    const std::string symbol;
+    const std::string datetime;
+    const SignalType signal_type;
+    const double strength;
 
 private:
     const EventType type = EventType::Signal;
-
-
 };
 
 

@@ -2,32 +2,26 @@
 
 
 template <typename DataHandlerType, typename PortfolioType, typename StrategyType, typename ExecutionHandlerType>
-Backtest<DataHandlerType, PortfolioType, StrategyType, ExecutionHandlerType>::Backtest(
-    const std::string& data_dir,
+Backtest<DataHandlerType, PortfolioType, StrategyType, ExecutionHandlerType>::Backtest(const std::string& data_dir,
     const std::vector<std::string>& symbol_list,
     double initial_capital,
     const std::string& start_date,
     const std::string& end_date,
     const std::string& interval,
-    float heartbeat
-) {
-    this->data_dir = data_dir;
-    this->symbol_list = symbol_list;
-    this->initial_capital = initial_capital;
-    this->start_date = start_date;
-    this->end_date = end_date;
-    this->interval = interval;
-    this->heartbeat = heartbeat;
-
-    this->events = std::make_shared<std::queue<Event*>>();
-
-    this->signal_count = 0;
-    this->order_count = 0;
-    this->fill_count = 0;
-    this->num_strats = 1;
-
+    float heartbeat)
+    : data_dir(data_dir),
+      symbol_list(symbol_list),
+      initial_capital(initial_capital),
+      start_date(start_date),
+      end_date(end_date),
+      interval(interval),
+      heartbeat(heartbeat),
+      events(std::make_shared<std::queue<Event*>>()),
+      signal_count(0),
+      order_count(0),
+      fill_count(0),
+      num_strats(1) {
     generate_trading_instances();
-
 }
 
 template <typename DataHandlerType, typename PortfolioType, typename StrategyType, typename ExecutionHandlerType>
@@ -35,7 +29,7 @@ void Backtest<DataHandlerType, PortfolioType, StrategyType, ExecutionHandlerType
     std::cout << "Creating DataHandler, Strategy, Portfolio and ExecutionHandler" << std::endl;
 
     // Create the data handler
-    this->data_handler = std::make_shared<DataHandlerType>(data_dir, symbol_list);
+    this->data_handler = std::make_shared<DataHandlerType>(events, data_dir, symbol_list);
 
     // Create the portfolio
     this->portfolio = std::make_unique<PortfolioType>(data_handler, events, start_date, initial_capital);

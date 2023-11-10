@@ -46,7 +46,12 @@ public:
     virtual std::vector<std::string> get_symbol_list() const = 0;
 
     virtual double get_latest_bar_value(const std::string& symbol, const std::string& field) = 0;
+
     virtual Bar get_latest_bar_datetime(const std::string& symbol) = 0;
+
+    virtual Bar get_latest_bar(const std::string& symbol) = 0;
+
+    virtual Bar get_latest_bar_values(const std::string& symbol, const std::string& field, int N=1) = 0;
 };
 
 

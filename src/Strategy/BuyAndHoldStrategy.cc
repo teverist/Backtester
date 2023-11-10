@@ -1,6 +1,5 @@
 #include <Strategy/BuyAndHoldStrategy.h>
 
-
 std::unordered_map<std::string, bool> BuyAndHoldStrategy::calculate_initial_bought_() {
     std::unordered_map<std::string, bool> bought;
     for(auto& symbol : symbol_list_) {
@@ -8,8 +7,6 @@ std::unordered_map<std::string, bool> BuyAndHoldStrategy::calculate_initial_boug
     }
     return bought;
 }
-
-
 
 void BuyAndHoldStrategy::calculate_signals(Event& event) { 
     constexpr double strength = 1.0;
