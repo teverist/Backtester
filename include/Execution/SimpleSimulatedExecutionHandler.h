@@ -6,12 +6,12 @@
 
 class SimpleSimulatedExecutionHandler : public ExecutionHandler {
 public:
-    SimpleSimulatedExecutionHandler(std::shared_ptr<std::queue<Event*>>& events_queue) : events_queue_(events_queue) {}
+    SimpleSimulatedExecutionHandler(std::shared_ptr<std::queue<std::shared_ptr<Event>>>& events_queue) : events_queue_(events_queue) {}
     void execute_order(const OrderEvent& order_event) override;
 
 
 private:
-    std::shared_ptr<std::queue<Event*>> events_queue_;
+    std::shared_ptr<std::queue<std::shared_ptr<Event>>> events_queue_;
 };
 
 

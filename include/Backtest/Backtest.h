@@ -37,11 +37,13 @@ private:
     const std::string end_date;
     const std::string interval;
     float heartbeat;
+
+
     std::shared_ptr<DataHandlerType> data_handler;
     std::unique_ptr<PortfolioType> portfolio;
     std::unique_ptr<StrategyType> strategy;
     std::unique_ptr<ExecutionHandlerType> execution_handler;
-    std::shared_ptr<std::queue<Event*>> events;
+    std::shared_ptr<std::queue<std::shared_ptr<Event>>> events;
 
     int signal_count;
     int order_count;

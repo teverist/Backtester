@@ -3,9 +3,9 @@
 
 template <typename DataHandlerType>
 Portfolio<DataHandlerType>::Portfolio(
-    std::shared_ptr<std::queue<Event*>>& events_queue,
+    std::shared_ptr<std::queue<std::shared_ptr<Event>>>& events_queue,
     std::shared_ptr<DataHandlerType>& data_handler,
-    std::string_view start_date,
+    const std::string& start_date,
     double initial_capital
 ) {
     events_queue_ = events_queue;
@@ -30,7 +30,7 @@ std::vector<std::unordered_map<std::string, double>> Portfolio<DataHandlerType>:
     for (const auto& symbol : symbol_list_) {
         positions[symbol] = 0.0;
     }
-    positions["datetime"] = start_date_;
+    //positions["datetime"] = start_date_;
     return {positions};
 }
 
@@ -41,7 +41,7 @@ std::vector<std::unordered_map<std::string, double>> Portfolio<DataHandlerType>:
     for (const auto& symbol : symbol_list_) {
         holdings[symbol] = 0.0;
     }
-    holdings["datetime"] = start_date_;
+    //holdings["datetime"] = start_date_;
     holdings["cash"] = initial_capital_;
     holdings["commission"] = 0.0;
     holdings["total"] = initial_capital_;
@@ -63,19 +63,20 @@ std::unordered_map<std::string, double> Portfolio<DataHandlerType>::construct_cu
 
 
 template <typename DataHandlerType>
-void Portfolio<DataHandlerType>::update_timeindex() {
+void Portfolio<DataHandlerType>::update_timeindex(const Event& event) {
     std::unordered_map<std::string, double> position;
     for (const auto& symbol : symbol_list_) {
         position[symbol] = current_positions_[symbol];
     }
-    position["datetime"] = data_handler_->get_latest_bar_datetime(symbol_list_[0]);
+    //position["datetime"] = data_handler_->get_latest_bar_datetime(symbol_list_[0]);
+
     all_positions_.push_back(position);
 
     std::unordered_map<std::string, double> holdings;
     for (const auto& symbol : symbol_list_) {
         holdings[symbol] = current_holdings_[symbol];
     }
-    holdings["datetime"] = data_handler_->get_latest_bar_datetime(symbol_list_[0]);
+    //holdings["datetime"] = data_handler_->get_latest_bar_datetime(symbol_list_[0]);
     holdings["cash"] = current_holdings_["cash"];
     holdings["commission"] = current_holdings_["commission"];
     holdings["total"] = current_holdings_["total"];
@@ -94,8 +95,8 @@ void Portfolio<DataHandlerType>::update_signal(Event& event) {
 
 
 template <typename DataHandlerType>
-OrderEvent Portfolio<DataHandlerType>::generate_naive_order(const SignalEvent& signal) {
-    OrderEvent order;
+std::shared_ptr<Event> Portfolio<DataHandlerType>::generate_naive_order(const SignalEvent& signal) {
+    std::shared_ptr<Event> order;
     auto symbol = signal.symbol;
     auto direction = signal.signal_type;
     auto strength = signal.strength;
@@ -104,16 +105,16 @@ OrderEvent Portfolio<DataHandlerType>::generate_naive_order(const SignalEvent& s
     auto order_type = OrderType::MARKET;
 
     if (direction == SignalType::LONG && cur_quantity == 0) {
-        order = OrderEvent(symbol, order_type, mkt_quantity, "BUY");
+        order = std::make_shared<OrderEvent>(symbol, order_type, mkt_quantity, FillDirection::BUY);
     }
     if (direction == SignalType::SHORT && cur_quantity == 0) {
-        order = OrderEvent(symbol, order_type, mkt_quantity, "SELL");
+        order = std::make_shared<OrderEvent>(symbol, order_type, mkt_quantity, FillDirection::SELL);
     }
     if (direction == SignalType::EXIT && cur_quantity > 0) {
-        order = OrderEvent(symbol, order_type, abs(cur_quantity), "SELL");
+        order = std::make_shared<OrderEvent>(symbol, order_type, abs(cur_quantity), FillDirection::SELL);
     }
     if (direction == SignalType::EXIT && cur_quantity < 0) {
-        order = OrderEvent(symbol, order_type, abs(cur_quantity), "BUY");
+        order = std::make_shared<OrderEvent>(symbol, order_type, abs(cur_quantity), FillDirection::BUY);
     }
     return order;
 }

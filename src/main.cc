@@ -1,17 +1,15 @@
 #include <iostream>
 
-#include <Events/Event.h>
 #include <Events/FillEvent.h>
 #include <Events/OrderEvent.h>
 #include <Events/SignalEvent.h>
-#include <Data/DataHandler.h>
 #include <Data/HistoricCSVDataHandler.h>
 #include <Portfolio/Portfolio.h>
-#include <Strategy/Strategy.h>
 #include <Strategy/BuyAndHoldStrategy.h>
-#include <Execution/Execution.h>
 #include <Execution/SimpleSimulatedExecutionHandler.h>
 #include <Backtest/Backtest.h>
+#include "Backtest/Backtest.cc"
+#include "Portfolio/Portfolio.cc"
 
 
 int main() {
@@ -35,6 +33,8 @@ int main() {
         interval,
         heartbeat
     );
+
+    backtest.simulate_trading();
 
     return 0;
 }

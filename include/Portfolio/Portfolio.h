@@ -15,13 +15,21 @@
 template <class DataHandlerType>
 class Portfolio {
 public:
-    Portfolio(std::shared_ptr<std::queue<Event*>>& events_queue, std::shared_ptr<DataHandlerType>& data_handler, std::string_view start_date, double initial_capital);
+    Portfolio(std::shared_ptr<std::queue<std::shared_ptr<Event>>>& events_queue, 
+        std::shared_ptr<DataHandlerType>& data_handler, 
+        const std::string& start_date, 
+        double initial_capital
+    );
+
+    void update_timeindex(const Event& event);
+    void update_fill(Event& event);
+    void update_signal(Event& event);
 
 private:
 
-    std::shared_ptr<std::queue<Event*>> events_queue_;
+    std::shared_ptr<std::queue<std::shared_ptr<Event>>> events_queue_;
     std::shared_ptr<DataHandlerType> data_handler_;
-    std::string_view start_date_;
+    std::string start_date_;
     double initial_capital_;
     std::vector<std::string> symbol_list_;
 
@@ -34,12 +42,9 @@ private:
     std::vector<std::unordered_map<std::string, double>> construct_all_holdings();
     std::unordered_map<std::string, double> construct_current_holdings();
 
-    void update_timeindex();
     void update_positions_after_fill(const FillEvent& fill_event);
     void update_holdings_after_fill(const FillEvent& fill_event);
-    void update_fill(Event& event);
-    void update_signal(Event& event);
-    OrderEvent generate_naive_order(const SignalEvent& signal);
+    std::shared_ptr<Event> generate_naive_order(const SignalEvent& signal);
 
 };
 

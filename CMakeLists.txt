@@ -15,6 +15,7 @@ include_directories(
 )
 
 set(SOURCES_BACKTEST
+    src/main.cc
     src/Events/FillEvent.cc
     src/Events/OrderEvent.cc
     src/Data/HistoricCSVDataHandler.cc
@@ -22,7 +23,6 @@ set(SOURCES_BACKTEST
     src/Execution/SimpleSimulatedExecutionHandler.cc
     src/Strategy/BuyAndHoldStrategy.cc
     src/Backtest/Backtest.cc
-    src/main.cc
 )
 
 add_executable(backtester ${SOURCES_BACKTEST})

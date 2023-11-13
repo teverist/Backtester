@@ -15,25 +15,24 @@
 class HistoricCSVDataHandler : public DataHandler {
 public:
     HistoricCSVDataHandler(
-        std::shared_ptr<std::vector<Event*>>& events, 
+        std::shared_ptr<std::queue<std::shared_ptr<Event>>>& events, 
         const std::string& csv_dir, 
         const std::vector<std::string>& symbol_list
-    ) : events_(events), csv_dir_(csv_dir), symbol_list_(symbol_list) {
-        open_convert_csv_files_();
-    }
+    );
 
     std::vector<std::string> get_symbol_list() const override { return symbol_list_; }
-    Bar get_latest_bar_datetime(const std::string& symbol) override;
+    std::string get_latest_bar_datetime(const std::string& symbol) override;
     double get_latest_bar_value(const std::string& symbol, const std::string& field) override;
+    void update_bars();
+    std::vector<Bar> get_latest_bar_values(const std::string& symbol, const std::string& field, int N=1) override;
 
 
-
+    bool continue_backtest = true;
     const std::vector<std::string> symbol_list_;   
 
 private:
-    bool continue_backtest_ = true;
     const std::string csv_dir_;
-    std::shared_ptr<std::vector<Event*>> events_;
+    std::shared_ptr<std::queue<std::shared_ptr<Event>>> events_;
 
     std::unordered_map<std::string, std::vector<Bar>> bars_;
     std::unordered_map<std::string, std::vector<Bar>> latest_symbol_data_;
@@ -41,7 +40,6 @@ private:
 
     void open_convert_csv_files_();
     std::vector<Bar> get_latest_bars(const std::string& symbol, int N=1) override;
-    void update_bars();
     
 };
 

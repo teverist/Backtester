@@ -10,17 +10,22 @@ Backtest<DataHandlerType, PortfolioType, StrategyType, ExecutionHandlerType>::Ba
     const std::string& interval,
     float heartbeat)
     : data_dir(data_dir),
-      symbol_list(symbol_list),
-      initial_capital(initial_capital),
-      start_date(start_date),
-      end_date(end_date),
-      interval(interval),
-      heartbeat(heartbeat),
-      events(std::make_shared<std::queue<Event*>>()),
-      signal_count(0),
-      order_count(0),
-      fill_count(0),
-      num_strats(1) {
+    symbol_list(symbol_list),
+    initial_capital(initial_capital),
+    start_date(start_date),
+    end_date(end_date),
+    interval(interval),
+    heartbeat(heartbeat),
+    events(std::make_shared<std::queue<std::shared_ptr<Event>>>()),
+    signal_count(0),
+    order_count(0),
+    fill_count(0),
+    num_strats(1) 
+{
+    data_handler = nullptr;
+    portfolio = nullptr;
+    strategy = nullptr;
+    execution_handler = nullptr;
     generate_trading_instances();
 }
 
@@ -32,7 +37,7 @@ void Backtest<DataHandlerType, PortfolioType, StrategyType, ExecutionHandlerType
     this->data_handler = std::make_shared<DataHandlerType>(events, data_dir, symbol_list);
 
     // Create the portfolio
-    this->portfolio = std::make_unique<PortfolioType>(data_handler, events, start_date, initial_capital);
+    this->portfolio = std::make_unique<PortfolioType>(events, data_handler, start_date, initial_capital);
 
     // Create the strategy
     this->strategy = std::make_unique<StrategyType>(data_handler, events);
@@ -61,24 +66,29 @@ void Backtest<DataHandlerType, PortfolioType, StrategyType, ExecutionHandlerType
         // Handle the events
         while (!events->empty()) {
             auto event = events->front();
+            // Get actual event object.
+
             events->pop();
 
             switch(event->getType()) {
+                // TODO: Fix this implementation
+                // Either change type of events in event queue, or find a way to cast between events
                 case EventType::Market: {
-                    strategy->calculate_signals(event);
-                    portfolio->update_time_index(event);
+                    strategy->calculate_signals(*event);
+                    portfolio->update_timeindex(*event);
                     break;
                 }
                 case EventType::Signal: {
-                    portfolio->update_signal(event);
+                    portfolio->update_signal(*event);
                     break;
                 }
                 case EventType::Order: {
-                    execution_handler->execute_order(event);
+                    const OrderEvent order_event = static_cast<const OrderEvent&>(*event);
+                    execution_handler->execute_order(order_event);
                     break;
                 }
                 case EventType::Fill: {
-                    portfolio->update_fill(event);
+                    portfolio->update_fill(*event);
                     break;
                 }
                 default: {
@@ -87,11 +97,10 @@ void Backtest<DataHandlerType, PortfolioType, StrategyType, ExecutionHandlerType
                 }
             }
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(heartbeat));
+        int sleep = (int)(heartbeat * 1000);
+        std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
 
-    }
-
-        
+    }   
 }
 
 

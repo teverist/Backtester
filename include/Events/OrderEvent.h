@@ -29,21 +29,22 @@ public:
         symbol_(symbol), order_type_(order_type), quantity_(quantity), direction_(direction) {};
 
     EventType getType() const override { return type_; }
-    std::string get_symbol() const { return symbol_; }
-    OrderType get_order_type() const { return order_type_; }
-    int get_quantity() const { return quantity_; }
-    FillDirection get_direction() const { return direction_; }
+    std::string get_symbol() { return symbol_; }
+    OrderType get_order_type() { return order_type_; }
+    int get_quantity() { return quantity_; }
+    FillDirection get_direction() { return direction_; }
+
+
+    std::string symbol_;
+    OrderType order_type_;
+    int quantity_;
+    FillDirection direction_;
 
 
     void print_order();
 
 private:
     const EventType type_ = EventType::Order;
-
-    const std::string symbol_;
-    OrderType order_type_;
-    const int quantity_;
-    FillDirection direction_;
 };
 
 

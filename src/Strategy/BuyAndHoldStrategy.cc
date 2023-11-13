@@ -15,8 +15,8 @@ void BuyAndHoldStrategy::calculate_signals(Event& event) {
             auto bars = data_handler_->get_latest_bars(symbol);
             if (bars.size() > 0) {
                 if (!bought_[symbol]) {
-                    auto signal = SignalEvent(symbol, "now", SignalType::LONG, strength); // TODO: Fix datetime
-                    events_->push(&signal);
+                    auto signal = std::make_shared<SignalEvent>(symbol, "now", SignalType::LONG, strength);
+                    events_->push(signal);
                     bought_[symbol] = true;
                 }
             }

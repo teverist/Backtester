@@ -2,17 +2,14 @@
 
 
 void SimpleSimulatedExecutionHandler::execute_order(const OrderEvent& event) {
-    auto fill_event = FillEvent(
-        //Todo: change to libfmt
-        //std::format("{:%d-%m-%Y %H:%M:%OS}", std::chrono::system_clock::now()),
-        std::string("2021-01-01 00:00:00"),
-        event.get_symbol(),
-        event.get_quantity(),
-        event.get_direction(),
-        1.0,
+    auto fill_event = std::make_shared<FillEvent>(
+        "2020-01-01", // TODO: Get current time
+        event.symbol_,
+        event.quantity_,
+        event.direction_,
+        1.0, // TODO: Get current price
         0.0
     );
-
-    this->events_queue_->push(new FillEvent(fill_event));
-
+    
+    events_queue_->push(fill_event);
 }

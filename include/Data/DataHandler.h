@@ -8,6 +8,7 @@
 #include <vector>
 #include <unordered_map>
 #include <memory>
+#include <queue>
 
 /**
  * @brief DataHandler is an abstract base class providing an interface for
@@ -47,11 +48,9 @@ public:
 
     virtual double get_latest_bar_value(const std::string& symbol, const std::string& field) = 0;
 
-    virtual Bar get_latest_bar_datetime(const std::string& symbol) = 0;
+    virtual std::string get_latest_bar_datetime(const std::string& symbol) = 0;
 
-    virtual Bar get_latest_bar(const std::string& symbol) = 0;
-
-    virtual Bar get_latest_bar_values(const std::string& symbol, const std::string& field, int N=1) = 0;
+    virtual std::vector<Bar> get_latest_bar_values(const std::string& symbol, const std::string& field, int N=1) = 0;
 };
 
 
