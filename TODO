@@ -1,4 +1,3 @@
-- Fix linker issues
 - Add unit tests
 - Switch to using <chrono> for time
 - Add better logging
